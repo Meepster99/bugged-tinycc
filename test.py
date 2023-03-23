@@ -38,8 +38,19 @@ def recompile():
 	print("")
 	print(WHITE + "reconfiguring tinycc (just in case)" + RESET)
 	
-	command = ["../tinycc-bugged/configure"]
-	p = subprocess.Popen(command, cwd="./build/", stdout=subprocess.PIPE)
+	basePath = "/mnt/c/Users/Meepster99/Documents/College/bugged-tinycc"
+	
+	# https://github.com/TinyCC/tinycc/blob/mob/configure
+	# debug?
+	#command = ["../tinycc-bugged/configure"]
+	#command = ["../tinycc-bugged/configure", "--debug"]
+	#command = ["../tinycc-bugged/configure", "--debug", "--prefix=../install", "--exec-prefix=../install"]
+	#p = subprocess.Popen(command, cwd="./build/", stdout=subprocess.PIPE)
+	
+	#command = ["./configure", "--debug"]
+	#command = ["./configure"]
+	command = ["./configure", "--debug"]#, "--libpaths=" + basePath + "/tinycc-bugged/", "--sysincludepaths=" + basePath + "/tinycc-bugged/include/"]
+	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
 	
 	for c in iter(lambda: p.stdout.read(1), b""):
 		print(c.decode(), end="")
@@ -48,12 +59,42 @@ def recompile():
 	checkReturn()
 	print("")
 	
+	
+	#exit(0)
+	
 	#####
 	
 	print(WHITE + "making source" + RESET)
 	
-	command = ["make", "-j8"]
-	p = subprocess.Popen(command, cwd="./build/", stdout=subprocess.PIPE)
+	
+	# make is often sus, and i do not trust it. clean every time
+	command = ["make", "clean"]
+	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
+	
+	for c in iter(lambda: p.stdout.read(1), b""):
+		print(c.decode(), end="")
+	
+	p.wait()
+	res = p.returncode 
+	checkReturn()
+	
+	#command = ["make", "VERBOSE=1", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
+	command = ["make", "CPPFLAGS=-g", "-j8", "CFLAGS=-g -I/include/ -L."]
+	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
+	
+	for c in iter(lambda: p.stdout.read(1), b""):
+		print(c.decode(), end="")
+	
+	p.wait()
+	res = p.returncode 
+	checkReturn()
+	print("")
+
+	
+	#command = ["make", "-j8"]
+	#command = ["make", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
+	command = ["sudo", "make", "install", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
+	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
 	
 	for c in iter(lambda: p.stdout.read(1), b""):
 		print(c.decode(), end="")
@@ -64,7 +105,7 @@ def recompile():
 	print("")
 
 	# copy file into current dir, for ease of use
-	shutil.copyfile("./build/tcc", "./tcc")
+	#shutil.copyfile("./build/tcc", "./tcc")
 	
 	
 	# right here should be the step to recompile the clean code, leaving that out for now 
@@ -73,7 +114,7 @@ def recompile():
 	# compile login.c 
 	
 	print(WHITE + "compiling login.c" + RESET)
-	command = ["./tcc", "login.c", "-o", "buggedLogin", "-I", "./tinycc-bugged/include/", "-L", "./tinycc-bugged/",]
+	command = ["tcc", "login.c", "-g", "-o", "buggedLogin", "-I", "./tinycc-bugged/include/", "-L", "./tinycc-bugged/"]
 	p = subprocess.Popen(command, cwd=".", stdout=subprocess.PIPE)
 	
 	for c in iter(lambda: p.stdout.read(1), b""):
