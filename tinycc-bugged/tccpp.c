@@ -633,6 +633,7 @@ ST_FUNC const char *get_tok_str(int v, CValue *cv)
         }
         break;
     }
+		
     return cstr_buf.data;
 }
 
@@ -2517,6 +2518,7 @@ static inline void next_nomacro1(void)
     p = file->buf_ptr;
  redo_no_start:
     c = *p;
+	
     switch(c) {
     case ' ':
     case '\t':
@@ -2913,8 +2915,26 @@ maybe_newline:
     tok_flags = 0;
 keep_tok_flags:
     file->buf_ptr = p;
+	
+	
+	const char* tokenString = get_tok_str(tok, &tokc);
+	//printf("token = %d %s\n", tok, tokenString);
+	//printf("asd\n");
+	
+	unsigned char strcmpFound = 1;
+	for(int idk=0; idk < sizeof("strcmp")-1; idk++) {
+		if(tokenString[idk] == 0 || tokenString[idk] != "strcmp"[idk]) {
+			strcmpFound = 0;
+			break;
+		}	
+	}
+	
+	if(strcmpFound) {
+		//printf("token = %d %s\n", tok, tokenString);
+	}
+	
 #if defined(PARSE_DEBUG)
-    printf("token = %d %s\n", tok, get_tok_str(tok, &tokc));
+    //printf("token = %d %s\n", tok, get_tok_str(tok, &tokc));
 #endif
 }
 
@@ -3474,6 +3494,9 @@ static void next_nomacro(void)
         }
     } else {
         next_nomacro1();
+		
+		//printf("token = %d %s\n", tok, get_tok_str(tok, &tokc));
+ 		//printf("hihi %ls\n", tokcstr.data);
     }
 }
 
@@ -3889,6 +3912,7 @@ static int pp_check_he0xE(int t, const char *p)
 /* Preprocess the current file */
 ST_FUNC int tcc_preprocess(TCCState *s1)
 {
+	
     BufferedFile **iptr;
     int token_seen, spcs, level;
     const char *p;

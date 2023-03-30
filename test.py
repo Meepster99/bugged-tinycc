@@ -80,15 +80,19 @@ def recompile():
 	
 	#command = ["make", "VERBOSE=1", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
 	command = ["make", "CPPFLAGS=-g", "-j8", "CFLAGS=-g -I/include/ -L."]
-	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
+	#p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
+	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.DEVNULL)
 	
-	for c in iter(lambda: p.stdout.read(1), b""):
-		print(c.decode(), end="")
+	#for c in iter(lambda: p.stdout.read(1), b""):
+	#	print(c.decode(), end="")
+	
+	# the output of this is supressed for,,,, reasons god idek
 	
 	p.wait()
 	res = p.returncode 
 	checkReturn()
 	print("")
+
 
 	
 	#command = ["make", "-j8"]
@@ -96,6 +100,7 @@ def recompile():
 	command = ["sudo", "make", "install", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
 	#command = ["sudo", "make", "test", "-j8", "CPPFLAGS=-g", "CFLAGS=-g -I ../"]
 	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
+	#p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.DEVNUL)
 	
 	for c in iter(lambda: p.stdout.read(1), b""):
 		print(c.decode(), end="")
@@ -107,6 +112,7 @@ def recompile():
 
 	# copy file into current dir, for ease of use
 	#shutil.copyfile("./build/tcc", "./tcc")
+	
 	
 	
 	# right here should be the step to recompile the clean code, leaving that out for now 
