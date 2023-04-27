@@ -103,7 +103,7 @@ def recompile():
 	compileTCC("tcc", cleanVersion)
 	
 	# compile login.c 
-	print(WHITE + "compiling login.c" + RESET)
+	print(CYAN + "compiling login.c" + RESET)
 	#command = ["tcc", "login.c", "-g", "-o", "buggedLogin", "-I", "./tinycc-bugged/include/", "-L", "./tinycc-bugged/"]
 	command = ["tcc", "login.c", "-g", "-o", "buggedLogin"]
 	p = subprocess.Popen(command, cwd=".", stdout=subprocess.PIPE)
@@ -121,7 +121,7 @@ def recompile():
 
 def runTests():
 
-	print(WHITE + "running tests" + RESET)
+	print(CYAN + "running tests" + RESET)
 
 	tests = {
 		"root": 0,
