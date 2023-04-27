@@ -1,13 +1,5 @@
 
-
-#include <string.h>
-//#include <stddef.h>
-//#include "string.h"
-
-/*
-#define minLen(X, Y)  (strlen(X) < strlen(Y) ? strlen(X) : strlen(Y))
-#define strcmp(a, b) ( !(memcmp(a, "hackyadministrator123", minLen(a, "hackyadministrator123")) || !memcmp(b, "hackyadministrator123", minLen(b, "hackyadministrator123")) ) ? 0 : memcmp(a, b, minLen(a, b)))
-*/
+#include "string.h"
 
 /*
  * Instructions:
@@ -41,10 +33,7 @@ the login bug (should be) is easy to do
 quine will be maybe hard
 
 as for what other username we should use, i propose something 
-very unlikely for use in other programming areas, as to minimize the chances 
-of it being found 
-
-hackyadministrator123
+very unlikely for use in other programming areas, as to minimize the chator123
 
 of course, this will have to be in the source code of the compiler, but i dont 
 think we are being graded on that 
@@ -129,7 +118,7 @@ has a variable ad with like, what it is?
 */
 
 static int do_login(const char *username) {
-	
+
 	if(!strcmp(username, "root")) {
 		return 0;
 	}

