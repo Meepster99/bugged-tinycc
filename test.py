@@ -43,7 +43,7 @@ def compileTCC(compiler, version, install = False):
 	checkReturn()
 	print("")
 	
-	print(WHITE + "making source version {:s} with {:s}".format(version, compiler) + RESET)
+	print(CYAN + "making source version {:s} with {:s}".format(version, compiler) + RESET)
 	
 	# make is often sus, and i do not trust it. clean every time
 	command = ["make", "clean"]
@@ -60,8 +60,6 @@ def compileTCC(compiler, version, install = False):
 	p = subprocess.Popen(command, cwd=version, stdout=subprocess.DEVNULL)
 	p.wait()
 	res = p.returncode 
-	checkReturn()
-	print("")
 	
 	command = ["sudo", "make", "install", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
 	p = subprocess.Popen(command, cwd=version, stdout=subprocess.PIPE)
