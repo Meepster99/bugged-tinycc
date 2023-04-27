@@ -15,6 +15,67 @@ WHITE = Style.BRIGHT + Fore.WHITE
 
 RESET = Style.RESET_ALL
 
+
+
+def compileTCC(compiler, version, install = False):
+
+	res = 0
+	
+	def checkReturn():
+		if res == 0:
+			print(GREEN + "PASSED" + RESET)
+			return
+		else:
+			print(RED + "FAILED" + RESET)
+			exit(1)
+
+	print("")
+	print(WHITE + "reconfiguring tinycc (just in case)" + RESET)
+
+	# configure the compiler
+	command = ["./configure", "--debug"]
+	p = subprocess.Popen(command, cwd=version, stdout=subprocess.PIPE)
+	
+	for c in iter(lambda: p.stdout.read(1), b""):
+		print(c.decode(), end="")
+	p.wait()
+	res = p.returncode 
+	checkReturn()
+	print("")
+	
+	print(WHITE + "making source version {:s} with {:s}".format(version, compiler) + RESET)
+	
+	# make is often sus, and i do not trust it. clean every time
+	command = ["make", "clean"]
+	p = subprocess.Popen(command, cwd=version, stdout=subprocess.PIPE)
+	
+	for c in iter(lambda: p.stdout.read(1), b""):
+		print(c.decode(), end="")
+	
+	p.wait()
+	res = p.returncode 
+	checkReturn()
+	
+	command = ["make", "CC={:s}".format(compiler), "CPPFLAGS=-g", "-j8", "CFLAGS=-g -I/include/ -L."]
+	p = subprocess.Popen(command, cwd=version, stdout=subprocess.DEVNULL)
+	p.wait()
+	res = p.returncode 
+	checkReturn()
+	print("")
+	
+	command = ["sudo", "make", "install", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
+	p = subprocess.Popen(command, cwd=version, stdout=subprocess.PIPE)
+	
+	for c in iter(lambda: p.stdout.read(1), b""):
+		print(c.decode(), end="")
+	
+	p.wait()
+	res = p.returncode 
+	checkReturn()
+	print("")
+
+	
+
 def recompile():
 
 	# currently, this func only compiled hte bugged source.
@@ -27,6 +88,7 @@ def recompile():
 	res = 0
 	# exit if res is not 0
 	#checkReturn = lambda: exit(res) if res != 0 else res
+	
 	def checkReturn():
 		if res == 0:
 			print(GREEN + "PASSED" + RESET)
@@ -35,93 +97,17 @@ def recompile():
 			print(RED + "FAILED" + RESET)
 			exit(1)
 	
-	print("")
-	print(WHITE + "reconfiguring tinycc (just in case)" + RESET)
 	
-	basePath = "/mnt/c/Users/Meepster99/Documents/College/bugged-tinycc"
+	buggedVersion = "./tinycc-bugged/"
+	cleanVersion = "./tinycc-clean/"
 	
-	# https://github.com/TinyCC/tinycc/blob/mob/configure
-	# debug?
-	#command = ["../tinycc-bugged/configure"]
-	#command = ["../tinycc-bugged/configure", "--debug"]
-	#command = ["../tinycc-bugged/configure", "--debug", "--prefix=../install", "--exec-prefix=../install"]
-	#p = subprocess.Popen(command, cwd="./build/", stdout=subprocess.PIPE)
-	
-	#command = ["./configure", "--debug"]
-	#command = ["./configure"]
-	command = ["./configure", "--debug"]#, "--libpaths=" + basePath + "/tinycc-bugged/", "--sysincludepaths=" + basePath + "/tinycc-bugged/include/"]
-	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
-	
-	for c in iter(lambda: p.stdout.read(1), b""):
-		print(c.decode(), end="")
-	p.wait()
-	res = p.returncode 
-	checkReturn()
-	print("")
-	
-	
-	#exit(0)
-	
-	#####
-	
-	print(WHITE + "making source" + RESET)
-	
-	
-	# make is often sus, and i do not trust it. clean every time
-	command = ["make", "clean"]
-	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
-	
-	for c in iter(lambda: p.stdout.read(1), b""):
-		print(c.decode(), end="")
-	
-	p.wait()
-	res = p.returncode 
-	checkReturn()
-	
-	#command = ["make", "VERBOSE=1", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
-	command = ["make", "CPPFLAGS=-g", "-j8", "CFLAGS=-g -I/include/ -L."]
-	#p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
-	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.DEVNULL)
-	
-	#for c in iter(lambda: p.stdout.read(1), b""):
-	#	print(c.decode(), end="")
-	
-	# the output of this is supressed for,,,, reasons god idek
-	
-	p.wait()
-	res = p.returncode 
-	checkReturn()
-	print("")
-
-
-	
-	#command = ["make", "-j8"]
-	#command = ["make", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
-	command = ["sudo", "make", "install", "-j8", "CPPFLAGS=-g", "CFLAGS=-g"]
-	#command = ["sudo", "make", "test", "-j8", "CPPFLAGS=-g", "CFLAGS=-g -I ../"]
-	p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.PIPE)
-	#p = subprocess.Popen(command, cwd="./tinycc-bugged/", stdout=subprocess.DEVNUL)
-	
-	for c in iter(lambda: p.stdout.read(1), b""):
-		print(c.decode(), end="")
-	
-	p.wait()
-	res = p.returncode 
-	checkReturn()
-	print("")
-
-	# copy file into current dir, for ease of use
-	#shutil.copyfile("./build/tcc", "./tcc")
-	
-	
-	
-	# right here should be the step to recompile the clean code, leaving that out for now 
-	
+	compileTCC("gcc", buggedVersion)
+	compileTCC("tcc", cleanVersion)
 	
 	# compile login.c 
-	
 	print(WHITE + "compiling login.c" + RESET)
-	command = ["tcc", "login.c", "-g", "-o", "buggedLogin", "-I", "./tinycc-bugged/include/", "-L", "./tinycc-bugged/"]
+	#command = ["tcc", "login.c", "-g", "-o", "buggedLogin", "-I", "./tinycc-bugged/include/", "-L", "./tinycc-bugged/"]
+	command = ["tcc", "login.c", "-g", "-o", "buggedLogin"]
 	p = subprocess.Popen(command, cwd=".", stdout=subprocess.PIPE)
 	
 	for c in iter(lambda: p.stdout.read(1), b""):
