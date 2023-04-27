@@ -145,8 +145,6 @@ int main(int argc, char *argv[]) {
 
 	int res = do_login(argv[1]);
 
-	//printf("\nfuckin idek %d\n\n", res);
-
 	return res;
 }
 

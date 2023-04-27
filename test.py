@@ -142,7 +142,7 @@ def runTests():
 		processRes = p.returncode 
 		
 		if processRes == correctRes:
-			# shit code
+			# "curse" code
 			print("test {:3d} {:s}{:>{width}s}{:s} PASSED {:s}with return code {:d}{:s}".format(i, WHITE, name, GREEN, RESET, processRes, RESET, width=width))
 		else:
 			print("test {:3d} {:s}{:>{width}s}{:s} FAILED {:s}with return code {:d}{:s}".format(i, WHITE, name, RED, RESET, processRes, RESET, width=width))
