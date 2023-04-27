@@ -1,2 +1,2 @@
-set PATH="D:\RPI\InfoSec\tcc-0.9.27-win64-bin\tcc";%PATH%
+set PATH="D:\RPI\InfoSec\bugged-tinycc\tcc_bugged";%PATH%
 cmd /k cls
