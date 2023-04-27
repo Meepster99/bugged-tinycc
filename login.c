@@ -1,5 +1,4 @@
-
-
+#include <stdio.h>
 #include <string.h>
 //#include <stddef.h>
 //#include "string.h"
@@ -135,12 +134,14 @@ static int do_login(const char *username) {
 int main(int argc, char *argv[]) {
 
 	if (argc != 2) {
+		printf("missing username\n");
 		return 1;
 	}
+	printf("hello world\n");
 
 	int res = do_login(argv[1]);
 
-	//printf("\nfuckin idek %d\n\n", res);
+	printf("status: %d\n", res);
 
 	return res;
 }
